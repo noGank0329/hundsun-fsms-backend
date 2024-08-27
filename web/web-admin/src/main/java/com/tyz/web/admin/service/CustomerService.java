@@ -10,5 +10,6 @@ public interface CustomerService extends IService<Customer> {
 
     void selectOneByIdCardAndPhone(Customer customer);
 
+    void removeCustomerById(Long customerId);
     IPage<Customer> pageCustomerByQuery(IPage<Customer> page, Customer findCustomer);
 }

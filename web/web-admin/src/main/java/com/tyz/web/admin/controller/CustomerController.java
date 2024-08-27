@@ -37,5 +37,18 @@ public class CustomerController {
         customerService.selectOneByIdCardAndPhone(customer);
         return Result.ok();
     }
+
+    @PostMapping("/update_customer")
+    public Result updateCustomer(@RequestBody Customer Customer){
+        customerService.saveOrUpdate(Customer);
+        return Result.ok();
+    }
+
+    //删除customer信息
+    @DeleteMapping("/deleteCustomer")
+    public Result deleteCustomer(@RequestParam Long customerId){
+        customerService.removeCustomerById(customerId);
+        return Result.ok();
+    }
 }
 
