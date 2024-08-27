@@ -13,6 +13,7 @@ import com.tyz.web.admin.mapper.CustomerMapper;
 import com.tyz.web.admin.service.AccountService;
 import com.tyz.web.admin.service.CreditcardService;
 import com.tyz.web.admin.service.CustomerService;
+import com.tyz.web.admin.vo.CustomerInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -64,5 +65,8 @@ public class CustomerServiceImpl extends ServiceImpl<CustomerMapper, Customer> i
         //creditcardLambdaQueryWrapper.eq(Creditcard::getAccountId,accountIds);
         creditcardLambdaQueryWrapper.in(Creditcard::getAccountId, accountIds);
         creditcardService.remove(creditcardLambdaQueryWrapper);
+    }
+    public CustomerInfoVo findCustomerByAccountId(Integer accountId) {
+        return customerMapper.findCustomerByAccountId(accountId);
     }
 }

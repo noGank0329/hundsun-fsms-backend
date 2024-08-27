@@ -3,6 +3,7 @@ package com.tyz.web.admin.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.tyz.model.entity.Customer;
+import com.tyz.web.admin.vo.CustomerInfoVo;
 
 /**
 * @author tangyizuo
@@ -15,6 +16,8 @@ public interface CustomerMapper extends BaseMapper<Customer> {
     Customer getOneByIdCard(Long customerIdCard);
 
     IPage<Customer> pageCustomerByQuery(IPage<Customer> page, Customer findCustomer);
+
+    CustomerInfoVo findCustomerByAccountId(Integer accountId);
 }
 
 

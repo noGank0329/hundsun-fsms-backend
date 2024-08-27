@@ -22,4 +22,14 @@
         from account
         where customer_id = #{customerId}
     </select>
+    <select id="queryAccountByID" resultType="com.tyz.web.admin.vo.AccountRequest">
+        SELECT a.account_id as id
+        FROM customer c
+        JOIN account a ON c.customer_id = a.customer_id
+        <where>
+            <if test="ew != null">
+                ${ew.customSqlSegment}
+            </if>
+        </where>
+    </select>
 </mapper>

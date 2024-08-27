@@ -1,5 +1,8 @@
 package com.tyz.web.admin.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.tyz.common.result.Result;
 import com.tyz.common.result.ResultCodeEnum;
 import com.tyz.model.entity.Account;
@@ -44,8 +47,27 @@ public class CreditcardController {
     }
 
     @GetMapping("/queryAccountByID")
-    public Result<List<AccountRequest>> queryAccountByID(Long id){
-        List<AccountRequest> list = accountService.queryAccountByID(id);
+    public Result<List<AccountRequest>> queryAccountByID(@RequestParam Long id){
+        //List<AccountRequest> list = accountService.queryAccountByID(id);
+        LambdaQueryWrapper<AccountRequest> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(AccountRequest::getCustomerIdCard, id);
+        List<AccountRequest> list = accountService.queryAccountByID(queryWrapper);
         return Result.ok(list);
     }
+
+    //查询银行卡
+    @GetMapping("/queryCreditcardById")
+    public Result<IPage<Creditcard>> queryCreditCard(@RequestParam long current, @RequestParam long size, @RequestParam Long accountId){
+        IPage<Creditcard> page = new Page<>(current,size);
+        IPage<Creditcard> result = creditcardService.pageCreditCardById(page,accountId);
+        return Result.ok(result);
+    }
+    //银行卡管理
+    @GetMapping("/queryCreditcard")
+    public Result<IPage<Creditcard>> queryCreditCardWithCondition(@RequestParam long current, @RequestParam long size, Creditcard creditcard){
+        IPage<Creditcard> page = new Page<>(current,size);
+        IPage<Creditcard> result = creditcardService.queryCreditCardWithCondition(page,creditcard);
+        return Result.ok(result);
+    }
+
 }

@@ -30,7 +30,7 @@
         <where>
             1 = 1
             <if test="transactionVo.TransactionId != null">
-                and t.transaction_id LIKE CONCAT('%', #{transactionVo.TransactionId}, '%')
+                and t.transaction_id = #{transactionVo.TransactionId}
             </if>
             <if test="transactionVo.AccountId != null">
                 and t.account_id LIKE CONCAT('%', #{transactionVo.AccountId}, '%')

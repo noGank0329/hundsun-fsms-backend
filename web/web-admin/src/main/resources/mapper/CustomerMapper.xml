@@ -43,4 +43,17 @@
             </if>
         </where>
     </select>
+    <select id="findCustomerByAccountId" resultType="com.tyz.web.admin.vo.CustomerInfoVo">
+        SELECT
+        c.customer_id AS customerId,
+        c.customer_name AS customerName,
+        c.customer_type AS customerType,
+        c.customer_idcard AS customerIdcard,
+        c.customer_idcard_type AS customerIdcardType,
+        c.customer_phone AS customerPhone,
+        a.account_risk_level AS riskLevel
+        FROM customer c
+        INNER JOIN account a ON c.customer_id = a.customer_id
+        WHERE a.account_id = #{accountId}
+    </select>
 </mapper>

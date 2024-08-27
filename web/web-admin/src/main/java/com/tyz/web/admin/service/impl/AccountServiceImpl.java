@@ -1,5 +1,6 @@
 package com.tyz.web.admin.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.tyz.common.exception.LeaseException;
@@ -65,7 +66,8 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account>
     }
 
     @Override
-    public List<AccountRequest> queryAccountByID(Long id) {
-        return accountMapper.queryAccountByID(id);
+    public List<AccountRequest> queryAccountByID(LambdaQueryWrapper<AccountRequest> queryWrapper) {
+        return accountMapper.queryAccountByID(queryWrapper);
     }
+
 }

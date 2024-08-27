@@ -22,4 +22,31 @@
         from creditcard
         where creditcard_id = #{creditcard.creditcardId} and account_id = #{creditcard.accountId}
     </select>
+    <update id="updateBalanceByCardNumber">
+        UPDATE creditcard
+        SET balance = #{newBalance}
+        WHERE creditcard_id = #{cardNumber}
+    </update>
+    <select id="pageCreditCardById" resultType="com.tyz.model.entity.Creditcard">
+        select creditcard_id,bank,balance
+        from creditcard
+        where account_id = #{accountId}
+    </select>
+    <select id="queryCreditCardWithCondition" resultType="com.tyz.model.entity.Creditcard">
+        select creditcard_id,account_id,bank,
+        balance
+        from creditcard
+        <where>
+            1 = 1
+            <if test="creditcard.creditcardId != null">
+                and creditcard_id LIKE concat('%',#{creditcard.creditcardId},'%')
+            </if>
+            <if test="creditcard.accountId != null">
+                and account_id LIKE concat('%',#{creditcard.accountId},'%')
+            </if>
+            <if test="creditcard.bank != null">
+                and bank LIKE concat('%',#{creditcard.bank},'%')
+            </if>
+        </where>
+    </select>
 </mapper>
