@@ -11,4 +11,6 @@ public interface CreditcardService extends IService<Creditcard> {
     IPage<Creditcard> pageCreditCardById(IPage<Creditcard> page, Long accountId);
 
     IPage<Creditcard> queryCreditCardWithCondition(IPage<Creditcard> page, Creditcard creditcard);
+
+    void IsAccuracy(Long id,String password);
 }

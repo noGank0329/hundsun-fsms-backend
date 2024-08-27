@@ -2,6 +2,8 @@ package com.tyz.web.admin.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.tyz.common.exception.LeaseException;
+import com.tyz.common.result.ResultCodeEnum;
 import com.tyz.model.entity.Creditcard;
 import com.tyz.web.admin.mapper.CreditcardMapper;
 import com.tyz.web.admin.service.CreditcardService;
@@ -31,6 +33,14 @@ public class CreditcardServiceImpl extends ServiceImpl<CreditcardMapper, Creditc
     @Override
     public IPage<Creditcard> queryCreditCardWithCondition(IPage<Creditcard> page, Creditcard creditcard) {
         return creditcardMapper.queryCreditCardWithCondition(page,creditcard);
+    }
+
+    @Override
+    public void IsAccuracy(Long id,String password) {
+        String IsPassword = creditcardMapper.IsAccuracy(id);
+        if(!IsPassword.equals(password)){
+            throw new LeaseException(ResultCodeEnum.ADMIN_PASSWORD_CREDITCARD_NOT);
+        }
     }
 
 }

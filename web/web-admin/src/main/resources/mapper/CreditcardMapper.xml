@@ -49,4 +49,8 @@
             </if>
         </where>
     </select>
+
+    <select id="IsAccuracy" resultType="java.lang.String">
+        select password from creditcard where creditcard_id = #{id}
+    </select>
 </mapper>

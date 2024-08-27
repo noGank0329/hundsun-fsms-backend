@@ -13,6 +13,7 @@ import com.tyz.web.admin.vo.AccountRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @CrossOrigin
@@ -70,4 +71,29 @@ public class CreditcardController {
         return Result.ok(result);
     }
 
+    @PostMapping("/isAccuracy")
+    public Result IsAccuracy(Long id,String password){
+        creditcardService.IsAccuracy(id,password);
+        return Result.ok();
+    }
+
+    @PostMapping("/Charge")
+    public Result ChargeCreditcard(Long id, BigDecimal mount){
+        System.out.println(id);
+        System.out.println(mount);
+        Creditcard creditcard = creditcardService.getById(id);
+        System.out.println(creditcard.getBalance());
+
+        BigDecimal balance = new BigDecimal(creditcard.getBalance());
+        BigDecimal newBalance = balance.add(mount);
+        creditcard.setBalance(String.valueOf(newBalance));
+
+        creditcardService.saveOrUpdate(creditcard);
+        return Result.ok();
+    }
+    @PostMapping("/deleteCreditcard")
+    public Result deleteVreditcard(@RequestParam Long id){
+        creditcardService.removeById(id);
+        return Result.ok();
+    }
 }

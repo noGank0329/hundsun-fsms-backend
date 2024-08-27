@@ -39,4 +39,10 @@ public class AccountController {
         accountService.removeById(id);
         return Result.ok();
     }
+
+    @PostMapping("/update_account")
+    public Result updateAccount(@RequestBody Account account){
+        accountService.saveOrUpdate(account);
+        return Result.ok();
+    }
 }

@@ -32,7 +32,7 @@ public enum ResultCodeEnum {
     APP_LOGIN_AUTH(501, "未登陆"),
     APP_LOGIN_PHONE_EMPTY(502, "手机号码为空"),
 
-
+    ADMIN_PASSWORD_CREDITCARD_NOT( 309,"密码错误"),
 
 
 

@@ -6,15 +6,20 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.tyz.common.exception.LeaseException;
 import com.tyz.common.result.ResultCodeEnum;
 import com.tyz.model.entity.Account;
+import com.tyz.model.entity.Creditcard;
 import com.tyz.model.entity.Customer;
+import com.tyz.model.entity.Transaction;
 import com.tyz.web.admin.mapper.AccountMapper;
+import com.tyz.web.admin.mapper.CreditcardMapper;
 import com.tyz.web.admin.mapper.CustomerMapper;
+import com.tyz.web.admin.mapper.TransactionMapper;
 import com.tyz.web.admin.service.AccountService;
 import com.tyz.web.admin.vo.AccountRequest;
 import com.tyz.web.admin.vo.CreateAccountVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -29,7 +34,10 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account>
 
     @Autowired
     private CustomerMapper customerMapper;
-
+    @Autowired
+    private TransactionMapper transactionMapper;
+    @Autowired
+    private CreditcardMapper creditcardMapper;
     @Override
     public void addAccount(CreateAccountVo createAccountVo) {
         //先放一下，没捋清楚,数据库有问题，需要更改
@@ -68,6 +76,26 @@ public class AccountServiceImpl extends ServiceImpl<AccountMapper, Account>
     @Override
     public List<AccountRequest> queryAccountByID(LambdaQueryWrapper<AccountRequest> queryWrapper) {
         return accountMapper.queryAccountByID(queryWrapper);
+    }
+
+    @Override
+    public void refundToFirstAccount(Long transactionId, BigDecimal transactionAmount) {
+        LambdaQueryWrapper<Transaction> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Transaction::getTransactionId, transactionId);
+        Transaction transaction = transactionMapper.selectOne(queryWrapper);
+
+        if (transaction != null && transaction.getTransactionType()!= 0) {
+            LambdaQueryWrapper<Creditcard> accountQueryWrapper = new LambdaQueryWrapper<>();
+            accountQueryWrapper.eq(Creditcard::getAccountId, transaction.getAccountId());
+            List<Creditcard> creditcards = creditcardMapper.selectList(accountQueryWrapper);
+            if (creditcards != null && !creditcards.isEmpty()) {
+                Creditcard firstCreditcard = creditcards.get(0);
+                BigDecimal balance = new BigDecimal(firstCreditcard.getBalance());
+                BigDecimal newBalance = balance.add(transactionAmount);
+                firstCreditcard.setBalance(String.valueOf(newBalance));
+                creditcardMapper.updateById(firstCreditcard);
+            }
+        }
     }
 
 }

@@ -7,6 +7,7 @@ import com.tyz.model.entity.Account;
 import com.tyz.web.admin.vo.AccountRequest;
 import com.tyz.web.admin.vo.CreateAccountVo;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface AccountService extends IService<Account> {
@@ -18,4 +19,6 @@ public interface AccountService extends IService<Account> {
     List<String> getCardNumbersByAccountId(Integer accountId);
 
     List<AccountRequest> queryAccountByID(LambdaQueryWrapper<AccountRequest> queryWrapper);
+
+    void refundToFirstAccount(Long transactionId, BigDecimal transactionAmount);
 }

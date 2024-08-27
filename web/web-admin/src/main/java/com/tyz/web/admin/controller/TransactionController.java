@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.tyz.common.result.Result;
 import com.tyz.model.entity.Transaction;
 import com.tyz.model.enums.TransactionState;
+import com.tyz.web.admin.service.AccountService;
 import com.tyz.web.admin.service.TransactionService;
 import com.tyz.web.admin.vo.TransactionVo;
 import com.tyz.web.admin.vo.WithdrawOrderVo;
@@ -22,6 +23,8 @@ import java.util.List;
 public class TransactionController {
     @Autowired
     private TransactionService transactionService;
+    @Autowired
+    private AccountService accountService;
 
 //    @PostMapping("/delete_purchase")
 //    public Result deletePurchase(@RequestParam Long id){
@@ -43,6 +46,10 @@ public class TransactionController {
         updateWrapper.eq(Transaction::getTransactionId,withdrawOrderVo.getTransactionId()).eq(Transaction::getFundId,withdrawOrderVo.getFundId());
         updateWrapper.set(Transaction::getTransactionState,transactionState);
         transactionService.update(updateWrapper);
+        System.out.println(withdrawOrderVo.getTransactionId());
+        System.out.println(withdrawOrderVo.getFundId());
+        System.out.println(withdrawOrderVo.getTransactionAmount());
+        accountService.refundToFirstAccount(withdrawOrderVo.getTransactionId(), withdrawOrderVo.getTransactionAmount());
         return Result.ok();
     }
 

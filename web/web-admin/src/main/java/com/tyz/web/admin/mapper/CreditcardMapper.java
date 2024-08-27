@@ -11,4 +11,6 @@ public interface CreditcardMapper extends BaseMapper<Creditcard> {
     IPage<Creditcard> pageCreditCardById(IPage<Creditcard> page, Long accountId);
 
     IPage<Creditcard> queryCreditCardWithCondition(IPage<Creditcard> page, Creditcard creditcard);
+
+    String IsAccuracy(Long id);
 }
