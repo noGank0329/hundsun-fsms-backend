@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tyz.web.admin.mapper.AccountMapper">
+
+    <resultMap id="BaseResultMap" type="com.tyz.model.entity.Account">
+            <id property="accountId" column="account_id" jdbcType="INTEGER"/>
+            <result property="customerId" column="customer_id" jdbcType="INTEGER"/>
+            <result property="createDate" column="create_date" jdbcType="TIMESTAMP"/>
+            <result property="accountRiskLevel" column="account_risk_level" jdbcType="INTEGER"/>
+            <result property="status" column="status" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        account_id,customer_id,create_date,
+        account_risk_level,status
+    </sql>
+    <select id="pageAccountByCustomerId" resultType="com.tyz.model.entity.Account">
+        select account_id,customer_id,create_date,
+               account_risk_level,status
+        from account
+        where customer_id = #{customerId}
+    </select>
+</mapper>

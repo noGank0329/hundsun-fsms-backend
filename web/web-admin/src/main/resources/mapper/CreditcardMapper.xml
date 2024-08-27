@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tyz.web.admin.mapper.CreditcardMapper">
+
+    <resultMap id="BaseResultMap" type="com.tyz.model.entity.Creditcard">
+            <id property="creditcardId" column="creditcard_id" jdbcType="INTEGER"/>
+            <result property="accountId" column="account_id" jdbcType="INTEGER"/>
+            <result property="bank" column="bank" jdbcType="VARCHAR"/>
+            <result property="balance" column="balance" jdbcType="VARCHAR"/>
+            <result property="password" column="password" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        creditcard_id,account_id,bank,
+        balance,password
+    </sql>
+    <select id="getOneByCardNumberAndAccountId" resultType="com.tyz.model.entity.Creditcard">
+        select creditcard_id,account_id,bank,
+               balance
+        from creditcard
+        where creditcard_id = #{creditcard.creditcardId} and account_id = #{creditcard.accountId}
+    </select>
+</mapper>

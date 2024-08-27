@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tyz.web.admin.mapper.DailyfundnavMapper">
+
+    <resultMap id="BaseResultMap" type="com.tyz.model.entity.Dailyfundnav">
+            <id property="navId" column="nav_id" jdbcType="INTEGER"/>
+            <result property="fundId" column="fund_id" jdbcType="INTEGER"/>
+            <result property="navDate" column="nav_date" jdbcType="TIMESTAMP"/>
+            <result property="fundNav" column="fund_nav" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        nav_id,fund_id,nav_date,
+        fund_nav
+    </sql>
+    <select id="getDailynav" resultType="com.tyz.model.entity.Dailyfundnav">
+        select nav_id,fund_id,nav_date,
+               fund_nav
+        from dailyfundnav
+        where fund_id = #{dailyfundnav.fundId} and nav_date = #{dailyfundnav.navDate}
+    </select>
+    <select id="listByDate" resultType="com.tyz.model.entity.Dailyfundnav">
+        select nav_id,fund_id,nav_date,
+               fund_nav
+        from dailyfundnav
+        where nav_date = #{date}
+    </select>
+</mapper>

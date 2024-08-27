@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tyz.web.admin.mapper.FundMapper">
+
+    <resultMap id="BaseResultMap" type="com.tyz.model.entity.Fund">
+            <id property="fundId" column="fund_id" jdbcType="INTEGER"/>
+            <result property="fundName" column="fund_name" jdbcType="VARCHAR"/>
+            <result property="fundType" column="fund_type" jdbcType="VARCHAR"/>
+            <result property="fundNav" column="fund_nav" jdbcType="DECIMAL"/>
+            <result property="fundEstDate" column="fund_est_date" jdbcType="TIMESTAMP"/>
+            <result property="fundCode" column="fund_code" jdbcType="VARCHAR"/>
+            <result property="fundRiskLevel" column="fund_risk_level" jdbcType="INTEGER"/>
+            <result property="fundManagerName" column="fund_manager_name" jdbcType="VARCHAR"/>
+            <result property="fundState" column="fund_state" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        fund_id,fund_name,fund_type,
+        fund_nav,fund_est_date,fund_code,
+        fund_risk_level,fund_manager_name,fund_state
+    </sql>
+    <select id="listFundInfo" resultType="com.tyz.model.entity.Fund">
+        select *
+        from fund;
+    </select>
+    <select id="pageFundByQuery" resultType="com.tyz.model.entity.Fund">
+        select fund_id,fund_name,fund_type,
+               fund_risk_level,fund_state,fund_nav
+        from fund
+        <where>
+            1 = 1
+            <if test="fund.fundId != null">
+                and fund_id LIKE CONCAT('%', #{fund.fundId}, '%')
+            </if>
+            <if test="fund.fundName != null">
+                and fund_name LIKE CONCAT('%',#{fund.fundName},'%')
+            </if>
+            <if test="fund.fundType != null">
+                and fund_type = #{fund.fundType}
+            </if>
+            <if test="fund.fundRiskLevel != null">
+                and fund_risk_level = #{fund.fundRiskLevel}
+            </if>
+            <if test="fund.fundState != null">
+                and fund_state = #{fund.fundState}
+            </if>
+            <if test="fund.fundNav != null">
+                and fund_nav = #{fund.fundNav}
+            </if>
+        </where>
+    </select>
+</mapper>

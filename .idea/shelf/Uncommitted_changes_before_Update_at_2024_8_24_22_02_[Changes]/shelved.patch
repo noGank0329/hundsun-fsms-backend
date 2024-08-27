@@ -1,0 +1,620 @@
+Index: web/web-admin/src/main/java/com/tyz/web/admin/controller/DailyfundnavController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.tyz.web.admin.controller;\r\n\r\nimport com.tyz.common.result.Result;\r\nimport com.tyz.model.entity.Dailyfundnav;\r\nimport com.tyz.web.admin.service.DailyfundnavService;\r\nimport org.springframework.beans.factory.annotation.Autowired;\r\nimport org.springframework.web.bind.annotation.GetMapping;\r\nimport org.springframework.web.bind.annotation.RequestMapping;\r\nimport org.springframework.web.bind.annotation.RequestParam;\r\nimport org.springframework.web.bind.annotation.RestController;\r\n\r\n@RestController\r\n@RequestMapping(\"/dailyfundnav\")\r\npublic class DailyfundnavController {\r\n    @Autowired\r\n    private DailyfundnavService dailyfundnavService;\r\n\r\n    @GetMapping(\"/get_dailynav\")\r\n    public Result<Dailyfundnav> getDailynav(@RequestParam Dailyfundnav dailyfundnav){\r\n        Dailyfundnav dailyfundnav1 =  dailyfundnavService.getDailynav(dailyfundnav);\r\n        return Result.ok(dailyfundnav1);\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/web/web-admin/src/main/java/com/tyz/web/admin/controller/DailyfundnavController.java b/web/web-admin/src/main/java/com/tyz/web/admin/controller/DailyfundnavController.java
+--- a/web/web-admin/src/main/java/com/tyz/web/admin/controller/DailyfundnavController.java	(revision 5ebdc8dc8e380c20ac98eaeded386fcb765ff9b1)
++++ b/web/web-admin/src/main/java/com/tyz/web/admin/controller/DailyfundnavController.java	(date 1724507186827)
+@@ -4,10 +4,11 @@
+ import com.tyz.model.entity.Dailyfundnav;
+ import com.tyz.web.admin.service.DailyfundnavService;
+ import org.springframework.beans.factory.annotation.Autowired;
+-import org.springframework.web.bind.annotation.GetMapping;
+-import org.springframework.web.bind.annotation.RequestMapping;
+-import org.springframework.web.bind.annotation.RequestParam;
+-import org.springframework.web.bind.annotation.RestController;
++import org.springframework.web.bind.annotation.*;
++
++import java.time.LocalDate;
++import java.util.Calendar;
++import java.util.Date;
+ 
+ @RestController
+ @RequestMapping("/dailyfundnav")
+@@ -15,9 +16,21 @@
+     @Autowired
+     private DailyfundnavService dailyfundnavService;
+ 
++    //查询前一日净值
+     @GetMapping("/get_dailynav")
+     public Result<Dailyfundnav> getDailynav(@RequestParam Dailyfundnav dailyfundnav){
++        Calendar cal = Calendar.getInstance();
++        cal.setTime(dailyfundnav.getNavDate());
++        cal.add(Calendar.DATE, -1);
++        Date previousDay = cal.getTime();
++        dailyfundnav.setNavDate(previousDay);
+         Dailyfundnav dailyfundnav1 =  dailyfundnavService.getDailynav(dailyfundnav);
+         return Result.ok(dailyfundnav1);
+     }
++    //更新净值
++    @PostMapping("/update_dailynav")
++    public Result updateDailynav(@RequestParam Dailyfundnav dailyfundnav){
++        dailyfundnavService.saveOrUpdate(dailyfundnav);
++        return Result.ok();
++    }
+ }
+Index: web/web-admin/src/main/java/com/tyz/web/admin/service/impl/SettlementServiceImpl.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.tyz.web.admin.service.impl;\r\n\r\nimport com.baomidou.mybatisplus.core.metadata.IPage;\r\nimport com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;\r\nimport com.tyz.model.entity.Settlement;\r\nimport com.tyz.web.admin.mapper.SettlementMapper;\r\nimport com.tyz.web.admin.service.SettlementService;\r\nimport org.springframework.beans.factory.annotation.Autowired;\r\nimport org.springframework.stereotype.Service;\r\n\r\n@Service\r\npublic class SettlementServiceImpl extends ServiceImpl<SettlementMapper, Settlement>\r\n    implements SettlementService {\r\n\r\n\r\n\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/web/web-admin/src/main/java/com/tyz/web/admin/service/impl/SettlementServiceImpl.java b/web/web-admin/src/main/java/com/tyz/web/admin/service/impl/SettlementServiceImpl.java
+--- a/web/web-admin/src/main/java/com/tyz/web/admin/service/impl/SettlementServiceImpl.java	(revision 5ebdc8dc8e380c20ac98eaeded386fcb765ff9b1)
++++ b/web/web-admin/src/main/java/com/tyz/web/admin/service/impl/SettlementServiceImpl.java	(date 1724507443742)
+@@ -8,11 +8,18 @@
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.stereotype.Service;
+ 
++import java.util.Date;
++import java.util.List;
++
+ @Service
+ public class SettlementServiceImpl extends ServiceImpl<SettlementMapper, Settlement>
+     implements SettlementService {
+-
++    @Autowired
++    private SettlementMapper settlementMapper;
+ 
+ 
+-
++    @Override
++    public List<Settlement> listByDate(Date date) {
++        return settlementMapper.listByDate(date);
++    }
+ }
+Index: web/web-admin/src/main/java/com/tyz/web/admin/service/SettlementService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.tyz.web.admin.service;\r\n\r\nimport com.baomidou.mybatisplus.core.metadata.IPage;\r\nimport com.baomidou.mybatisplus.extension.service.IService;\r\nimport com.tyz.model.entity.Settlement;\r\n\r\npublic interface SettlementService extends IService<Settlement> {\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/web/web-admin/src/main/java/com/tyz/web/admin/service/SettlementService.java b/web/web-admin/src/main/java/com/tyz/web/admin/service/SettlementService.java
+--- a/web/web-admin/src/main/java/com/tyz/web/admin/service/SettlementService.java	(revision 5ebdc8dc8e380c20ac98eaeded386fcb765ff9b1)
++++ b/web/web-admin/src/main/java/com/tyz/web/admin/service/SettlementService.java	(date 1724507443731)
+@@ -4,6 +4,10 @@
+ import com.baomidou.mybatisplus.extension.service.IService;
+ import com.tyz.model.entity.Settlement;
+ 
++import java.util.Date;
++import java.util.List;
++
+ public interface SettlementService extends IService<Settlement> {
+ 
++    List<Settlement> listByDate(Date date);
+ }
+Index: web/web-admin/src/main/java/com/tyz/web/admin/mapper/SettlementMapper.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.tyz.web.admin.mapper;\r\n\r\nimport com.baomidou.mybatisplus.core.mapper.BaseMapper;\r\nimport com.baomidou.mybatisplus.core.metadata.IPage;\r\nimport com.tyz.model.entity.Settlement;\r\n\r\npublic interface SettlementMapper extends BaseMapper<Settlement> {\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/web/web-admin/src/main/java/com/tyz/web/admin/mapper/SettlementMapper.java b/web/web-admin/src/main/java/com/tyz/web/admin/mapper/SettlementMapper.java
+--- a/web/web-admin/src/main/java/com/tyz/web/admin/mapper/SettlementMapper.java	(revision 5ebdc8dc8e380c20ac98eaeded386fcb765ff9b1)
++++ b/web/web-admin/src/main/java/com/tyz/web/admin/mapper/SettlementMapper.java	(date 1724507443750)
+@@ -4,6 +4,10 @@
+ import com.baomidou.mybatisplus.core.metadata.IPage;
+ import com.tyz.model.entity.Settlement;
+ 
++import java.util.Date;
++import java.util.List;
++
+ public interface SettlementMapper extends BaseMapper<Settlement> {
+ 
++    List<Settlement> listByDate(Date date);
+ }
+Index: web/web-admin/src/main/resources/mapper/SettlementMapper.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<!DOCTYPE mapper\r\n        PUBLIC \"-//mybatis.org//DTD Mapper 3.0//EN\"\r\n        \"http://mybatis.org/dtd/mybatis-3-mapper.dtd\">\r\n<mapper namespace=\"com.tyz.web.admin.mapper.SettlementMapper\">\r\n\r\n    <resultMap id=\"BaseResultMap\" type=\"com.tyz.model.entity.Settlement\">\r\n            <id property=\"settlementId\" column=\"settlement_id\" jdbcType=\"INTEGER\"/>\r\n            <result property=\"settlementDate\" column=\"settlement_date\" jdbcType=\"TIMESTAMP\"/>\r\n            <result property=\"settlementResult\" column=\"settlement_result\" jdbcType=\"VARCHAR\"/>\r\n            <result property=\"settlementState\" column=\"settlement_state\" jdbcType=\"INTEGER\"/>\r\n            <result property=\"userId\" column=\"user_id\" jdbcType=\"INTEGER\"/>\r\n    </resultMap>\r\n\r\n    <sql id=\"Base_Column_List\">\r\n        settlement_id,settlement_date,settlement_result,\r\n        settlement_state,user_id\r\n    </sql>\r\n\r\n</mapper>\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/web/web-admin/src/main/resources/mapper/SettlementMapper.xml b/web/web-admin/src/main/resources/mapper/SettlementMapper.xml
+--- a/web/web-admin/src/main/resources/mapper/SettlementMapper.xml	(revision 5ebdc8dc8e380c20ac98eaeded386fcb765ff9b1)
++++ b/web/web-admin/src/main/resources/mapper/SettlementMapper.xml	(date 1724508146317)
+@@ -16,5 +16,11 @@
+         settlement_id,settlement_date,settlement_result,
+         settlement_state,user_id
+     </sql>
++    <select id="listByDate" resultType="com.tyz.model.entity.Settlement">
++        select settlement_id,settlement_date,settlement_result,
++               settlement_state,user_id
++        from settlement
++        where settlement_date = #{date}
++    </select>
+ 
+ </mapper>
+Index: web/web-admin/src/main/java/com/tyz/web/admin/controller/SettlementController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.tyz.web.admin.controller;\r\n\r\nimport com.baomidou.mybatisplus.core.metadata.IPage;\r\nimport com.baomidou.mybatisplus.extension.plugins.pagination.Page;\r\nimport com.tyz.common.result.Result;\r\nimport com.tyz.model.entity.Settlement;\r\nimport com.tyz.web.admin.service.SettlementService;\r\nimport com.tyz.web.admin.service.TransactionService;\r\nimport org.springframework.beans.factory.annotation.Autowired;\r\nimport org.springframework.web.bind.annotation.GetMapping;\r\nimport org.springframework.web.bind.annotation.RequestMapping;\r\nimport org.springframework.web.bind.annotation.RequestParam;\r\nimport org.springframework.web.bind.annotation.RestController;\r\n\r\n@RestController\r\n@RequestMapping(\"/settlement\")\r\npublic class SettlementController {\r\n\r\n    @Autowired\r\n    private TransactionService transactionService;\r\n\r\n\r\n    //申购或赎回订单\r\n    @GetMapping(\"/order\")\r\n    public Result<IPage<Settlement>> settlementSubscriptionOrRedemption(@RequestParam long current, @RequestParam long size,Long id){\r\n        IPage<Settlement> page = new Page<>(current,size);\r\n        IPage<Settlement> result = transactionService.settlementSubscriptionOrRedemption(page,id);\r\n        return Result.ok(result);\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/web/web-admin/src/main/java/com/tyz/web/admin/controller/SettlementController.java b/web/web-admin/src/main/java/com/tyz/web/admin/controller/SettlementController.java
+--- a/web/web-admin/src/main/java/com/tyz/web/admin/controller/SettlementController.java	(revision 5ebdc8dc8e380c20ac98eaeded386fcb765ff9b1)
++++ b/web/web-admin/src/main/java/com/tyz/web/admin/controller/SettlementController.java	(date 1724507443757)
+@@ -4,13 +4,15 @@
+ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+ import com.tyz.common.result.Result;
+ import com.tyz.model.entity.Settlement;
++import com.tyz.model.entity.Transaction;
+ import com.tyz.web.admin.service.SettlementService;
+ import com.tyz.web.admin.service.TransactionService;
++import com.tyz.web.admin.vo.TransactionRequest;
+ import org.springframework.beans.factory.annotation.Autowired;
+-import org.springframework.web.bind.annotation.GetMapping;
+-import org.springframework.web.bind.annotation.RequestMapping;
+-import org.springframework.web.bind.annotation.RequestParam;
+-import org.springframework.web.bind.annotation.RestController;
++import org.springframework.web.bind.annotation.*;
++
++import java.util.Date;
++import java.util.List;
+ 
+ @RestController
+ @RequestMapping("/settlement")
+@@ -19,6 +21,9 @@
+     @Autowired
+     private TransactionService transactionService;
+ 
++    @Autowired
++    private SettlementService settlementService;
++
+ 
+     //申购或赎回订单
+     @GetMapping("/order")
+@@ -27,4 +32,24 @@
+         IPage<Settlement> result = transactionService.settlementSubscriptionOrRedemption(page,id);
+         return Result.ok(result);
+     }
++
++    @PostMapping("/confirm-settlements")
++    public Result<Void> confirmSettlements(@RequestBody TransactionRequest request) {
++        transactionService.confirmSettlements(request.getIds());
++        return Result.ok();
++    }
++
++    //数据导出
++    @GetMapping("/queryTransaction")
++    public Result<IPage<Transaction>> queryTransaction(@RequestParam long current, @RequestParam long size, Date date){
++        IPage<Transaction> page = new Page<>(current,size);
++        IPage<Transaction> result = transactionService.pageTransactionByDate(page,date);
++        return Result.ok(result);
++    }
++
++    @GetMapping("/querySettlement")
++    public Result<List<Settlement>> querySettlement(Date date){
++        List<Settlement> list = settlementService.listByDate(date);
++        return Result.ok(list);
++    }
+ }
+Index: web/web-admin/src/main/java/com/tyz/web/admin/vo/TransactionRequest.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/web/web-admin/src/main/java/com/tyz/web/admin/vo/TransactionRequest.java b/web/web-admin/src/main/java/com/tyz/web/admin/vo/TransactionRequest.java
+new file mode 100644
+--- /dev/null	(date 1724496524336)
++++ b/web/web-admin/src/main/java/com/tyz/web/admin/vo/TransactionRequest.java	(date 1724496524336)
+@@ -0,0 +1,18 @@
++package com.tyz.web.admin.vo;
++
++import lombok.Data;
++
++import java.util.List;
++
++@Data
++public class TransactionRequest {
++    private List<Long> ids;
++
++    public List<Long> getIds() {
++        return ids;
++    }
++
++    public void setIds(List<Long> ids) {
++        this.ids = ids;
++    }
++}
+Index: web/web-admin/src/main/java/com/tyz/web/admin/interceptor/AuthenticationInterceptor.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/web/web-admin/src/main/java/com/tyz/web/admin/interceptor/AuthenticationInterceptor.java b/web/web-admin/src/main/java/com/tyz/web/admin/interceptor/AuthenticationInterceptor.java
+new file mode 100644
+--- /dev/null	(date 1724490023356)
++++ b/web/web-admin/src/main/java/com/tyz/web/admin/interceptor/AuthenticationInterceptor.java	(date 1724490023356)
+@@ -0,0 +1,34 @@
++package com.tyz.web.admin.interceptor;
++
++
++import com.tyz.common.utils.JwtUtil;
++import com.tyz.web.admin.interceptor.login.LoginUser;
++import com.tyz.web.admin.interceptor.login.LoginUserHolder;
++import io.jsonwebtoken.Claims;
++import jakarta.servlet.http.HttpServletRequest;
++import jakarta.servlet.http.HttpServletResponse;
++import org.springframework.stereotype.Component;
++import org.springframework.web.servlet.HandlerInterceptor;
++
++@Component
++public class AuthenticationInterceptor implements HandlerInterceptor {
++
++    @Override
++    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
++
++        String token = request.getHeader("access-token");
++
++        Claims claims = JwtUtil.parseToken(token);
++        Long userId = claims.get("userId", Long.class);
++        String username = claims.get("username", String.class);
++        LoginUserHolder.setLoginUser(new LoginUser(userId, username));
++
++        return true;
++
++    }
++
++    @Override
++    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
++        LoginUserHolder.clear();
++    }
++}
+\ No newline at end of file
+Index: web/web-admin/src/main/java/com/tyz/web/admin/service/TransactionService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.tyz.web.admin.service;\r\n\r\nimport com.baomidou.mybatisplus.core.metadata.IPage;\r\nimport com.baomidou.mybatisplus.extension.service.IService;\r\nimport com.tyz.model.entity.Settlement;\r\nimport com.tyz.model.entity.Transaction;\r\nimport com.tyz.web.admin.vo.TransactionVo;\r\n\r\n\r\n/**\r\n* @author tangyizuo\r\n* @description 针对表【transaction】的数据库操作Service\r\n* @createDate 2024-08-19 17:41:55\r\n*/\r\npublic interface TransactionService extends IService<Transaction> {\r\n\r\n    IPage<TransactionVo> pageTransactionByQuery(IPage<TransactionVo> page, TransactionVo transactionVo);\r\n\r\n    IPage<Settlement> settlementSubscriptionOrRedemption(IPage<Settlement> page,Long id);\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/web/web-admin/src/main/java/com/tyz/web/admin/service/TransactionService.java b/web/web-admin/src/main/java/com/tyz/web/admin/service/TransactionService.java
+--- a/web/web-admin/src/main/java/com/tyz/web/admin/service/TransactionService.java	(revision 5ebdc8dc8e380c20ac98eaeded386fcb765ff9b1)
++++ b/web/web-admin/src/main/java/com/tyz/web/admin/service/TransactionService.java	(date 1724506369567)
+@@ -6,6 +6,9 @@
+ import com.tyz.model.entity.Transaction;
+ import com.tyz.web.admin.vo.TransactionVo;
+ 
++import java.util.Date;
++import java.util.List;
++
+ 
+ /**
+ * @author tangyizuo
+@@ -17,4 +20,9 @@
+     IPage<TransactionVo> pageTransactionByQuery(IPage<TransactionVo> page, TransactionVo transactionVo);
+ 
+     IPage<Settlement> settlementSubscriptionOrRedemption(IPage<Settlement> page,Long id);
++
++
++    void confirmSettlements(List<Long> ids);
++
++    IPage<Transaction> pageTransactionByDate(IPage<Transaction> page, Date date);
+ }
+Index: web/web-admin/src/main/java/com/tyz/web/admin/service/impl/TransactionServiceImpl.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.tyz.web.admin.service.impl;\r\n\r\n\r\nimport com.baomidou.mybatisplus.core.metadata.IPage;\r\nimport com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;\r\nimport com.tyz.model.entity.Settlement;\r\nimport com.tyz.model.entity.Transaction;\r\nimport com.tyz.web.admin.mapper.TransactionMapper;\r\nimport com.tyz.web.admin.service.TransactionService;\r\nimport com.tyz.web.admin.vo.TransactionVo;\r\nimport org.springframework.beans.factory.annotation.Autowired;\r\nimport org.springframework.stereotype.Service;\r\n\r\n/**\r\n* @author tangyizuo\r\n* @description 针对表【transaction】的数据库操作Service实现\r\n* @createDate 2024-08-19 17:41:55\r\n*/\r\n@Service\r\npublic class TransactionServiceImpl extends ServiceImpl<TransactionMapper, Transaction>\r\n    implements TransactionService {\r\n    @Autowired\r\n    private TransactionMapper transactionMapper;\r\n\r\n    @Override\r\n    public IPage<TransactionVo> pageTransactionByQuery(IPage<TransactionVo> page, TransactionVo transactionVo) {\r\n        return transactionMapper.pageTransactionByQuery(page,transactionVo);\r\n    }\r\n\r\n    @Override\r\n    public IPage<Settlement> settlementSubscriptionOrRedemption(IPage<Settlement> page,Long id) {\r\n        return transactionMapper.settlementSubscriptionOrRedemption(page,id);\r\n    }\r\n}\r\n\r\n\r\n\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/web/web-admin/src/main/java/com/tyz/web/admin/service/impl/TransactionServiceImpl.java b/web/web-admin/src/main/java/com/tyz/web/admin/service/impl/TransactionServiceImpl.java
+--- a/web/web-admin/src/main/java/com/tyz/web/admin/service/impl/TransactionServiceImpl.java	(revision 5ebdc8dc8e380c20ac98eaeded386fcb765ff9b1)
++++ b/web/web-admin/src/main/java/com/tyz/web/admin/service/impl/TransactionServiceImpl.java	(date 1724506369583)
+@@ -11,6 +11,9 @@
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.stereotype.Service;
+ 
++import java.util.Date;
++import java.util.List;
++
+ /**
+ * @author tangyizuo
+ * @description 针对表【transaction】的数据库操作Service实现
+@@ -31,6 +34,21 @@
+     public IPage<Settlement> settlementSubscriptionOrRedemption(IPage<Settlement> page,Long id) {
+         return transactionMapper.settlementSubscriptionOrRedemption(page,id);
+     }
++
++    @Override
++    public void confirmSettlements(List<Long> ids) {
++
++        for (Long id : ids) {
++            transactionMapper.updateStateById(id);
++        }
++    }
++
++    @Override
++    public IPage<Transaction> pageTransactionByDate(IPage<Transaction> page, Date date) {
++        return transactionMapper.pageTransactionByDate(page,date);
++    }
++
++
+ }
+ 
+ 
+Index: web/web-admin/src/main/java/com/tyz/web/admin/interceptor/login/LoginUser.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/web/web-admin/src/main/java/com/tyz/web/admin/interceptor/login/LoginUser.java b/web/web-admin/src/main/java/com/tyz/web/admin/interceptor/login/LoginUser.java
+new file mode 100644
+--- /dev/null	(date 1724490023376)
++++ b/web/web-admin/src/main/java/com/tyz/web/admin/interceptor/login/LoginUser.java	(date 1724490023376)
+@@ -0,0 +1,12 @@
++package com.tyz.web.admin.interceptor.login;
++
++import lombok.AllArgsConstructor;
++import lombok.Data;
++
++@Data
++@AllArgsConstructor
++public class LoginUser {
++
++    private Long userId;
++    private String username;
++}
+\ No newline at end of file
+Index: web/web-admin/src/main/java/com/tyz/web/admin/interceptor/login/LoginUserHolder.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/web/web-admin/src/main/java/com/tyz/web/admin/interceptor/login/LoginUserHolder.java b/web/web-admin/src/main/java/com/tyz/web/admin/interceptor/login/LoginUserHolder.java
+new file mode 100644
+--- /dev/null	(date 1724490023366)
++++ b/web/web-admin/src/main/java/com/tyz/web/admin/interceptor/login/LoginUserHolder.java	(date 1724490023366)
+@@ -0,0 +1,17 @@
++package com.tyz.web.admin.interceptor.login;
++
++public class LoginUserHolder {
++    public static ThreadLocal<LoginUser> threadLocal = new ThreadLocal<>();
++
++    public static void setLoginUser(LoginUser loginUser) {
++        threadLocal.set(loginUser);
++    }
++
++    public static LoginUser getLoginUser() {
++        return threadLocal.get();
++    }
++
++    public static void clear() {
++        threadLocal.remove();
++    }
++}
+\ No newline at end of file
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"9bffcfa0-2010-47b9-a6ff-321036c74c81\" name=\"Changes\" comment=\"rpc\">\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/model/src/main/java/com/tyz/model/entity/Transaction.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/model/src/main/java/com/tyz/model/entity/Transaction.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/controller/AccountController.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/controller/AccountController.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/controller/CreditcardController.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/controller/CreditcardController.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/controller/CustomerController.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/controller/CustomerController.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/controller/TransactionController.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/controller/TransactionController.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/controller/UserController.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/controller/UserController.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/mapper/AccountMapper.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/mapper/AccountMapper.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/mapper/CreditcardMapper.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/mapper/CreditcardMapper.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/service/AccountService.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/service/AccountService.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/service/CreditcardService.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/service/CreditcardService.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/service/CustomerService.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/service/CustomerService.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/service/impl/AccountServiceImpl.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/service/impl/AccountServiceImpl.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/service/impl/CreditcardServiceImpl.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/service/impl/CreditcardServiceImpl.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/service/impl/CustomerServiceImpl.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/service/impl/CustomerServiceImpl.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/web/web-admin/src/main/resources/mapper/AccountMapper.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/web/web-admin/src/main/resources/mapper/AccountMapper.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/web/web-admin/src/main/resources/mapper/CreditcardMapper.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/web/web-admin/src/main/resources/mapper/CreditcardMapper.xml\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"Enum\" />\r\n        <option value=\"Interface\" />\r\n        <option value=\"Class\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"GithubDefaultAccount\">\r\n    <option name=\"defaultAccountId\" value=\"39d12e03-a239-497b-b702-d01d5e54016b\" />\r\n  </component>\r\n  <component name=\"MavenImportPreferences\">\r\n    <option name=\"generalSettings\">\r\n      <MavenGeneralSettings>\r\n        <option name=\"mavenHome\" value=\"D:\\HouDuan\\javaweb\\day04-MavenAndMyBatis\\day04-1-Maven\\ziliao\\1.MavenAnZhuangBao\\apache-maven-3.6.1-bin\\apache-maven-3.6.1\" />\r\n        <option name=\"userSettingsFile\" value=\"D:\\HouDuan\\javaweb\\day04-MavenAndMyBatis\\day04-1-Maven\\ziliao\\1.MavenAnZhuangBao\\apache-maven-3.6.1-bin\\apache-maven-3.6.1\\conf\\settings.xml\" />\r\n      </MavenGeneralSettings>\r\n    </option>\r\n  </component>\r\n  <component name=\"ProjectColorInfo\">{\r\n  &quot;customColor&quot;: &quot;&quot;,\r\n  &quot;associatedIndex&quot;: 1\r\n}</component>\r\n  <component name=\"ProjectId\" id=\"2i5dAwOsyyhmohkTwwg4l70eFhf\" />\r\n  <component name=\"ProjectLevelVcsManager\" settingsEditedManually=\"true\">\r\n    <ConfirmationsSetting value=\"2\" id=\"Add\" />\r\n  </component>\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n    <option name=\"showMembers\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\">{\r\n  &quot;keyToString&quot;: {\r\n    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,\r\n    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,\r\n    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,\r\n    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,\r\n    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\r\n    &quot;Spring Boot.AdminWebApplication.executor&quot;: &quot;Run&quot;,\r\n    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;corretto-17&quot;,\r\n    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,\r\n    &quot;last_opened_file_path&quot;: &quot;D:/IDEA/IDEAFILES/HengdianSummerHolidayTraining/demo-rpc3/web/web-admin/src/main/resources/mapper&quot;,\r\n    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,\r\n    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,\r\n    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,\r\n    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,\r\n    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,\r\n    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,\r\n    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,\r\n    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,\r\n    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.DirectoryMappings&quot;,\r\n    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;\r\n  },\r\n  &quot;keyToStringList&quot;: {\r\n    &quot;DatabaseDriversLRU&quot;: [\r\n      &quot;mysql&quot;\r\n    ]\r\n  }\r\n}</component>\r\n  <component name=\"RecentsManager\">\r\n    <key name=\"CreateClassDialog.RecentsKey\">\r\n      <recent name=\"com.tyz.web.app.service\" />\r\n    </key>\r\n    <key name=\"CopyFile.RECENT_KEYS\">\r\n      <recent name=\"D:\\IDEA\\IDEAFILES\\HengdianSummerHolidayTraining\\demo-rpc3\\web\\web-admin\\src\\main\\resources\\mapper\" />\r\n      <recent name=\"D:\\IDEA\\IDEAFILES\\HengdianSummerHolidayTraining\\demo-rpc3\\model\\src\\main\\java\\com\\tyz\\model\\entity\" />\r\n      <recent name=\"D:\\IDEA\\IDEAFILES\\UtilsAndProjects\\springboot-system\\apartment\\web\\web-app\\src\\main\\java\\com\\tyz\\web\\app\" />\r\n      <recent name=\"D:\\IDEA\\IDEAFILES\\UtilsAndProjects\\springboot-system\\apartment\\web\\web-app\\src\\main\\java\\com\\tyz\\web\\app\\service\" />\r\n      <recent name=\"D:\\IDEA\\IDEAFILES\\UtilsAndProjects\\springboot-system\\apartment\\web\\web-app\\src\\main\\resources\" />\r\n    </key>\r\n    <key name=\"CopyClassDialog.RECENTS_KEY\">\r\n      <recent name=\"com.tyz.web.admin.mapper\" />\r\n      <recent name=\"com.tyz.web.admin.service.impl\" />\r\n      <recent name=\"com.tyz.web.admin.service\" />\r\n    </key>\r\n  </component>\r\n  <component name=\"RunManager\" selected=\"Spring Boot.AdminWebApplication\">\r\n    <configuration name=\"AdminWebApplication\" type=\"SpringBootApplicationConfigurationType\" factoryName=\"Spring Boot\" nameIsGenerated=\"true\">\r\n      <module name=\"web-admin\" />\r\n      <option name=\"SPRING_BOOT_MAIN_CLASS\" value=\"com.tyz.AdminWebApplication\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"AppWebApplication\" type=\"SpringBootApplicationConfigurationType\" factoryName=\"Spring Boot\" nameIsGenerated=\"true\">\r\n      <module name=\"web-app\" />\r\n      <option name=\"SPRING_BOOT_MAIN_CLASS\" value=\"com.tyz.AppWebApplication\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n  </component>\r\n  <component name=\"SharedIndexes\">\r\n    <attachedChunks>\r\n      <set>\r\n        <option value=\"jdk-1.8.0_392-corretto-1.8.0_392-f644763e9732-f719d367\" />\r\n        <option value=\"jdk-17.0.10-corretto-17.0.10-f644763e9732-24fca987\" />\r\n      </set>\r\n    </attachedChunks>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"9bffcfa0-2010-47b9-a6ff-321036c74c81\" name=\"Changes\" comment=\"\" />\r\n      <created>1718784233865</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1718784233865</updated>\r\n      <workItem from=\"1718784234953\" duration=\"1625000\" />\r\n      <workItem from=\"1718845325134\" duration=\"9468000\" />\r\n      <workItem from=\"1718872916404\" duration=\"40000\" />\r\n      <workItem from=\"1718873700746\" duration=\"5219000\" />\r\n      <workItem from=\"1718886119541\" duration=\"4736000\" />\r\n      <workItem from=\"1718931622690\" duration=\"17400000\" />\r\n      <workItem from=\"1724165567008\" duration=\"4856000\" />\r\n      <workItem from=\"1724208368916\" duration=\"20086000\" />\r\n      <workItem from=\"1724300497749\" duration=\"25750000\" />\r\n      <workItem from=\"1724340550536\" duration=\"862000\" />\r\n      <workItem from=\"1724384972695\" duration=\"6442000\" />\r\n    </task>\r\n    <task id=\"LOCAL-00001\" summary=\"分模块的公寓项目\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1718785364225</created>\r\n      <option name=\"number\" value=\"00001\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1718785364225</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00002\" summary=\"分模块的公寓项目\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1718785673761</created>\r\n      <option name=\"number\" value=\"00002\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1718785673761</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00003\" summary=\"分模块的公寓项目\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1718785766087</created>\r\n      <option name=\"number\" value=\"00003\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00003\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1718785766087</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00004\" summary=\"分模块的公寓项目\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1718890176265</created>\r\n      <option name=\"number\" value=\"00004\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00004\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1718890176265</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00005\" summary=\"rpc\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1724341708209</created>\r\n      <option name=\"number\" value=\"00005\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00005\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1724341708209</updated>\r\n    </task>\r\n    <option name=\"localTasksCounter\" value=\"6\" />\r\n    <servers />\r\n  </component>\r\n  <component name=\"TypeScriptGeneratedFilesManager\">\r\n    <option name=\"version\" value=\"3\" />\r\n  </component>\r\n  <component name=\"Vcs.Log.Tabs.Properties\">\r\n    <option name=\"TAB_STATES\">\r\n      <map>\r\n        <entry key=\"MAIN\">\r\n          <value>\r\n            <State />\r\n          </value>\r\n        </entry>\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"VcsManagerConfiguration\">\r\n    <MESSAGE value=\"分模块的公寓项目\" />\r\n    <MESSAGE value=\"rpc\" />\r\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"rpc\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 5ebdc8dc8e380c20ac98eaeded386fcb765ff9b1)
++++ b/.idea/workspace.xml	(date 1724508090782)
+@@ -5,23 +5,21 @@
+   </component>
+   <component name="ChangeListManager">
+     <list default="true" id="9bffcfa0-2010-47b9-a6ff-321036c74c81" name="Changes" comment="rpc">
++      <change afterPath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/interceptor/AuthenticationInterceptor.java" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/interceptor/login/LoginUser.java" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/interceptor/login/LoginUserHolder.java" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/vo/TransactionRequest.java" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/model/src/main/java/com/tyz/model/entity/Transaction.java" beforeDir="false" afterPath="$PROJECT_DIR$/model/src/main/java/com/tyz/model/entity/Transaction.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/controller/AccountController.java" beforeDir="false" afterPath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/controller/AccountController.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/controller/CreditcardController.java" beforeDir="false" afterPath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/controller/CreditcardController.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/controller/CustomerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/controller/CustomerController.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/controller/TransactionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/controller/TransactionController.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/controller/UserController.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/mapper/AccountMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/mapper/AccountMapper.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/mapper/CreditcardMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/mapper/CreditcardMapper.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/service/AccountService.java" beforeDir="false" afterPath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/service/AccountService.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/service/CreditcardService.java" beforeDir="false" afterPath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/service/CreditcardService.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/service/CustomerService.java" beforeDir="false" afterPath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/service/CustomerService.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/service/impl/AccountServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/service/impl/AccountServiceImpl.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/service/impl/CreditcardServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/service/impl/CreditcardServiceImpl.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/service/impl/CustomerServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/service/impl/CustomerServiceImpl.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/web/web-admin/src/main/resources/mapper/AccountMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/web/web-admin/src/main/resources/mapper/AccountMapper.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/web/web-admin/src/main/resources/mapper/CreditcardMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/web/web-admin/src/main/resources/mapper/CreditcardMapper.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/controller/DailyfundnavController.java" beforeDir="false" afterPath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/controller/DailyfundnavController.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/controller/SettlementController.java" beforeDir="false" afterPath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/controller/SettlementController.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/mapper/SettlementMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/mapper/SettlementMapper.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/mapper/TransactionMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/mapper/TransactionMapper.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/service/SettlementService.java" beforeDir="false" afterPath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/service/SettlementService.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/service/TransactionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/service/TransactionService.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/service/impl/SettlementServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/service/impl/SettlementServiceImpl.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/service/impl/TransactionServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/web/web-admin/src/main/java/com/tyz/web/admin/service/impl/TransactionServiceImpl.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/web/web-admin/src/main/resources/mapper/SettlementMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/web/web-admin/src/main/resources/mapper/SettlementMapper.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/web/web-admin/src/main/resources/mapper/TransactionMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/web/web-admin/src/main/resources/mapper/TransactionMapper.xml" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -63,45 +61,45 @@
+     <option name="showLibraryContents" value="true" />
+     <option name="showMembers" value="true" />
+   </component>
+-  <component name="PropertiesComponent">{
+-  &quot;keyToString&quot;: {
+-    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+-    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+-    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+-    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+-    &quot;Spring Boot.AdminWebApplication.executor&quot;: &quot;Run&quot;,
+-    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;corretto-17&quot;,
+-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+-    &quot;last_opened_file_path&quot;: &quot;D:/IDEA/IDEAFILES/HengdianSummerHolidayTraining/demo-rpc3/web/web-admin/src/main/resources/mapper&quot;,
+-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+-    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.DirectoryMappings&quot;,
+-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
++  <component name="PropertiesComponent"><![CDATA[{
++  "keyToString": {
++    "RequestMappingsPanelOrder0": "0",
++    "RequestMappingsPanelOrder1": "1",
++    "RequestMappingsPanelWidth0": "75",
++    "RequestMappingsPanelWidth1": "75",
++    "RunOnceActivity.OpenProjectViewOnStart": "true",
++    "RunOnceActivity.ShowReadmeOnStart": "true",
++    "Spring Boot.AdminWebApplication.executor": "Run",
++    "jdk.selected.JAVA_MODULE": "corretto-17",
++    "kotlin-language-version-configured": "true",
++    "last_opened_file_path": "D:/IDEA/IDEAFILES/HengdianSummerHolidayTraining/rpc/web/web-admin/src/main/java/com/tyz/web/admin/interceptor",
++    "node.js.detected.package.eslint": "true",
++    "node.js.detected.package.tslint": "true",
++    "node.js.selected.package.eslint": "(autodetect)",
++    "node.js.selected.package.tslint": "(autodetect)",
++    "nodejs_package_manager_path": "npm",
++    "project.structure.last.edited": "Project",
++    "project.structure.proportion": "0.0",
++    "project.structure.side.proportion": "0.0",
++    "settings.editor.selected.configurable": "http.proxy",
++    "vue.rearranger.settings.migration": "true"
+   },
+-  &quot;keyToStringList&quot;: {
+-    &quot;DatabaseDriversLRU&quot;: [
+-      &quot;mysql&quot;
++  "keyToStringList": {
++    "DatabaseDriversLRU": [
++      "mysql"
+     ]
+   }
+-}</component>
++}]]></component>
+   <component name="RecentsManager">
+     <key name="CreateClassDialog.RecentsKey">
+       <recent name="com.tyz.web.app.service" />
+     </key>
+     <key name="CopyFile.RECENT_KEYS">
++      <recent name="D:\IDEA\IDEAFILES\HengdianSummerHolidayTraining\rpc\web\web-admin\src\main\java\com\tyz\web\admin\interceptor" />
++      <recent name="D:\IDEA\IDEAFILES\HengdianSummerHolidayTraining\rpc\web\web-admin\src\main\java\com\tyz\web\admin" />
+       <recent name="D:\IDEA\IDEAFILES\HengdianSummerHolidayTraining\demo-rpc3\web\web-admin\src\main\resources\mapper" />
+       <recent name="D:\IDEA\IDEAFILES\HengdianSummerHolidayTraining\demo-rpc3\model\src\main\java\com\tyz\model\entity" />
+       <recent name="D:\IDEA\IDEAFILES\UtilsAndProjects\springboot-system\apartment\web\web-app\src\main\java\com\tyz\web\app" />
+-      <recent name="D:\IDEA\IDEAFILES\UtilsAndProjects\springboot-system\apartment\web\web-app\src\main\java\com\tyz\web\app\service" />
+-      <recent name="D:\IDEA\IDEAFILES\UtilsAndProjects\springboot-system\apartment\web\web-app\src\main\resources" />
+     </key>
+     <key name="CopyClassDialog.RECENTS_KEY">
+       <recent name="com.tyz.web.admin.mapper" />
+@@ -151,7 +149,9 @@
+       <workItem from="1724208368916" duration="20086000" />
+       <workItem from="1724300497749" duration="25750000" />
+       <workItem from="1724340550536" duration="862000" />
+-      <workItem from="1724384972695" duration="6442000" />
++      <workItem from="1724384972695" duration="8458000" />
++      <workItem from="1724432549175" duration="843000" />
++      <workItem from="1724489565448" duration="8610000" />
+     </task>
+     <task id="LOCAL-00001" summary="分模块的公寓项目">
+       <option name="closed" value="true" />
+@@ -193,7 +193,15 @@
+       <option name="project" value="LOCAL" />
+       <updated>1724341708209</updated>
+     </task>
+-    <option name="localTasksCounter" value="6" />
++    <task id="LOCAL-00006" summary="rpc">
++      <option name="closed" value="true" />
++      <created>1724412599103</created>
++      <option name="number" value="00006" />
++      <option name="presentableId" value="LOCAL-00006" />
++      <option name="project" value="LOCAL" />
++      <updated>1724412599104</updated>
++    </task>
++    <option name="localTasksCounter" value="7" />
+     <servers />
+   </component>
+   <component name="TypeScriptGeneratedFilesManager">
+Index: web/web-admin/src/main/java/com/tyz/web/admin/mapper/TransactionMapper.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.tyz.web.admin.mapper;\r\n\r\nimport com.baomidou.mybatisplus.core.mapper.BaseMapper;\r\nimport com.baomidou.mybatisplus.core.metadata.IPage;\r\nimport com.tyz.model.entity.Settlement;\r\nimport com.tyz.model.entity.Transaction;\r\nimport com.tyz.web.admin.vo.TransactionVo;\r\n\r\n\r\n/**\r\n* @author tangyizuo\r\n* @description 针对表【transaction】的数据库操作Mapper\r\n* @createDate 2024-08-19 17:41:55\r\n* @Entity com.demo.pc.entity.Transaction\r\n*/\r\npublic interface TransactionMapper extends BaseMapper<Transaction> {\r\n\r\n    IPage<TransactionVo> pageTransactionByQuery(IPage<TransactionVo> page, TransactionVo transactionVo);\r\n\r\n    IPage<Settlement> settlementSubscriptionOrRedemption(IPage<Settlement> page,Long id);\r\n}\r\n\r\n\r\n\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/web/web-admin/src/main/java/com/tyz/web/admin/mapper/TransactionMapper.java b/web/web-admin/src/main/java/com/tyz/web/admin/mapper/TransactionMapper.java
+--- a/web/web-admin/src/main/java/com/tyz/web/admin/mapper/TransactionMapper.java	(revision 5ebdc8dc8e380c20ac98eaeded386fcb765ff9b1)
++++ b/web/web-admin/src/main/java/com/tyz/web/admin/mapper/TransactionMapper.java	(date 1724506369577)
+@@ -6,6 +6,8 @@
+ import com.tyz.model.entity.Transaction;
+ import com.tyz.web.admin.vo.TransactionVo;
+ 
++import java.util.Date;
++
+ 
+ /**
+ * @author tangyizuo
+@@ -18,6 +20,10 @@
+     IPage<TransactionVo> pageTransactionByQuery(IPage<TransactionVo> page, TransactionVo transactionVo);
+ 
+     IPage<Settlement> settlementSubscriptionOrRedemption(IPage<Settlement> page,Long id);
++
++    void updateStateById(Long id);
++
++    IPage<Transaction> pageTransactionByDate(IPage<Transaction> page, Date date);
+ }
+ 
+ 
+Index: web/web-admin/src/main/resources/mapper/TransactionMapper.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<!DOCTYPE mapper\r\n        PUBLIC \"-//mybatis.org//DTD Mapper 3.0//EN\"\r\n        \"http://mybatis.org/dtd/mybatis-3-mapper.dtd\">\r\n<mapper namespace=\"com.tyz.web.admin.mapper.TransactionMapper\">\r\n\r\n    <resultMap id=\"BaseResultMap\" type=\"com.tyz.model.entity.Transaction\">\r\n            <id property=\"transactionId\" column=\"transaction_id\" jdbcType=\"INTEGER\"/>\r\n            <result property=\"accountId\" column=\"account_id\" jdbcType=\"INTEGER\"/>\r\n            <result property=\"fundId\" column=\"fund_id\" jdbcType=\"INTEGER\"/>\r\n            <result property=\"transactionType\" column=\"transaction_type\" jdbcType=\"INTEGER\"/>\r\n            <result property=\"transactionAmount\" column=\"transaction_amount\" jdbcType=\"DECIMAL\"/>\r\n            <result property=\"transactionShare\" column=\"transaction_share\" jdbcType=\"DECIMAL\"/>\r\n            <result property=\"transactionDate\" column=\"transaction_date\" jdbcType=\"TIMESTAMP\"/>\r\n            <result property=\"transactionState\" column=\"transaction_state\" jdbcType=\"INTEGER\"/>\r\n    </resultMap>\r\n\r\n    <sql id=\"Base_Column_List\">\r\n        transaction_id,account_id,fund_id,\r\n        transaction_type,transaction_amount,transaction_share,\r\n        transaction_date,transaction_state\r\n    </sql>\r\n    <select id=\"pageTransactionByQuery\" resultType=\"com.tyz.web.admin.vo.TransactionVo\">\r\n        select t.transaction_id,a.customer_id,t.account_id,t.fund_id,\r\n        t.transaction_type,t.transaction_amount,t.transaction_share,\r\n        t.transaction_date,t.transaction_state\r\n        from account a\r\n        left join transaction t on t.account_id = a.account_id\r\n        left join customer c on c.customer_id = a.customer_id\r\n        <where>\r\n            t.transaction_state = 0\r\n            <if test=\"transactionVo.TransactionId != null\">\r\n                and t.transaction_id LIKE CONCAT('%', #{transactionVo.TransactionId}, '%')\r\n            </if>\r\n            <if test=\"transactionVo.AccountId != null\">\r\n                and t.account_id LIKE CONCAT('%', #{transactionVo.AccountId}, '%')\r\n            </if>\r\n            <if test=\"transactionVo.CustomerId != null\">\r\n                and c.customer_id LIKE CONCAT('%', #{transactionVo.CustomerId}, '%')\r\n            </if>\r\n            <if test=\"transactionVo.CustomerIdCard != null\">\r\n                and c.customer_idcard LIKE CONCAT('%', #{transactionVo.CustomerIdCard}, '%')\r\n            </if>\r\n            <if test=\"transactionVo.FundId != null\">\r\n                and t.fund_id LIKE CONCAT('%', #{transactionVo.FundId}, '%')\r\n            </if>\r\n            <if test=\"transactionVo.TransactionType != null\">\r\n                and t.transaction_type = #{transactionVo.TransactionType}\r\n            </if>\r\n            <if test=\"transactionVo.TransactionDate != null\">\r\n                and t.transaction_date = #{transactionVo.TransactionDate}\r\n            </if>\r\n        </where>\r\n    </select>\r\n    <select id=\"settlementSubscriptionOrRedemption\" resultType=\"com.tyz.model.entity.Settlement\">\r\n        select t.transaction_id,t.account_id,t.fund_id,\r\n               t.transaction_type,t.transaction_amount,t.transaction_share,\r\n               t.transaction_date,a.customer_id,t.transaction_state\r\n        from account a\r\n                 left join transaction t on t.account_id = a.account_id\r\n                 left join customer c on c.customer_id = a.customer_id\r\n        where t.transaction_type = #{id} and t.transaction_state = 1;\r\n    </select>\r\n</mapper>\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/web/web-admin/src/main/resources/mapper/TransactionMapper.xml b/web/web-admin/src/main/resources/mapper/TransactionMapper.xml
+--- a/web/web-admin/src/main/resources/mapper/TransactionMapper.xml	(revision 5ebdc8dc8e380c20ac98eaeded386fcb765ff9b1)
++++ b/web/web-admin/src/main/resources/mapper/TransactionMapper.xml	(date 1724506453399)
+@@ -20,6 +20,12 @@
+         transaction_type,transaction_amount,transaction_share,
+         transaction_date,transaction_state
+     </sql>
++    <update id="updateStateById">
++        update transaction
++        set  transaction_state = 1
++        where transaction_id = #{id}
++    </update>
++
+     <select id="pageTransactionByQuery" resultType="com.tyz.web.admin.vo.TransactionVo">
+         select t.transaction_id,a.customer_id,t.account_id,t.fund_id,
+         t.transaction_type,t.transaction_amount,t.transaction_share,
+@@ -60,5 +66,12 @@
+                  left join transaction t on t.account_id = a.account_id
+                  left join customer c on c.customer_id = a.customer_id
+         where t.transaction_type = #{id} and t.transaction_state = 1;
++    </select>
++    <select id="pageTransactionByDate" resultType="com.tyz.model.entity.Transaction">
++        select transaction_id,account_id,fund_id,
++               transaction_type,transaction_amount,transaction_share,
++               transaction_date
++        from transaction
++        where transaction_date = #{date}
+     </select>
+ </mapper>

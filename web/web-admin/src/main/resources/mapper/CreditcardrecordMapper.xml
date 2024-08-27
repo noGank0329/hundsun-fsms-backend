@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tyz.web.admin.mapper.CreditcardrecordMapper">
+
+    <resultMap id="BaseResultMap" type="com.tyz.model.entity.Creditcardrecord">
+            <id property="recordId" column="record_id" jdbcType="INTEGER"/>
+            <result property="creditcardId" column="creditcard_id" jdbcType="INTEGER"/>
+            <result property="creditcardRecordDate" column="creditcard_record_date" jdbcType="TIMESTAMP"/>
+            <result property="creditcardRecordType" column="creditcard_record_type" jdbcType="INTEGER"/>
+            <result property="creditcardRecordAmount" column="creditcard_record_amount" jdbcType="DECIMAL"/>
+            <result property="balanceBefore" column="balance_before" jdbcType="DECIMAL"/>
+            <result property="balanceAfter" column="balance_after" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        record_id,creditcard_id,creditcard_record_date,
+        creditcard_record_type,creditcard_record_amount,balance_before,
+        balance_after
+    </sql>
+</mapper>

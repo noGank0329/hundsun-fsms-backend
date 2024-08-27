@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tyz.web.admin.mapper.CustomerMapper">
+
+    <resultMap id="BaseResultMap" type="com.tyz.model.entity.Customer">
+            <id property="customerId" column="customer_id" jdbcType="INTEGER"/>
+            <result property="customerName" column="customer_name" jdbcType="VARCHAR"/>
+            <result property="customerType" column="customer_type" jdbcType="INTEGER"/>
+            <result property="customerIdcard" column="customer_idcard" jdbcType="INTEGER"/>
+            <result property="customerIdcardType" column="customer_idcard_type" jdbcType="INTEGER"/>
+            <result property="customerPhone" column="customer_phone" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        customer_id,customer_name,customer_type,customer_idcard,
+        customer_idcard_type,customer_phone
+    </sql>
+    <select id="getOneByIdCard" resultType="com.tyz.model.entity.Customer">
+        select customer_id,customer_name,customer_type,customer_idcard,
+               customer_idcard_type,customer_phone
+        from customer
+        where customer_idcard = #{customerIdCard};
+    </select>
+    <select id="pageCustomerByQuery" resultType="com.tyz.model.entity.Customer">
+        select customer_id,customer_name,customer_type,customer_idcard,
+               customer_idcard_type,customer_phone
+        from customer
+        <where>
+                1 = 1
+            <if test="findCustomer.customerId != null">
+                and customer_id = LIKE CONCAT('%', #{findCustomer.customerId}, '%')
+            </if>
+            <if test="findCustomer.customerName != null">
+                and customer_name LIKE CONCAT('%', #{findCustomer.customerName}, '%')
+            </if>
+            <if test="findCustomer.customerType != null">
+                and customer_type = #{findCustomer.customerType}
+            </if>
+            <if test="findCustomer.customerPhone != null">
+                and customer_phone LIKE CONCAT('%', #{findCustomer.customerPhone}, '%')
+            </if>
+        </where>
+    </select>
+</mapper>

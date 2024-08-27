@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tyz.web.admin.mapper.SharerecordMapper">
+
+    <resultMap id="BaseResultMap" type="com.tyz.model.entity.Sharerecord">
+            <id property="recordId" column="record_id" jdbcType="INTEGER"/>
+            <result property="accountId" column="account_id" jdbcType="INTEGER"/>
+            <result property="shareRecordDate" column="share_record_date" jdbcType="TIMESTAMP"/>
+            <result property="shareRecordType" column="share_record_type" jdbcType="INTEGER"/>
+            <result property="shareRecordAmount" column="share_record_amount" jdbcType="INTEGER"/>
+            <result property="shareBefore" column="share_before" jdbcType="INTEGER"/>
+            <result property="shareAfter" column="share_after" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        record_id,account_id,share_record_date,
+        share_record_type,share_record_amount,share_before,
+        share_after
+    </sql>
+</mapper>

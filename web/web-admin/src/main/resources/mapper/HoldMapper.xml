@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tyz.web.admin.mapper.HoldMapper">
+
+    <resultMap id="BaseResultMap" type="com.tyz.model.entity.Hold">
+            <id property="holdId" column="hold_id" jdbcType="INTEGER"/>
+            <result property="accountId" column="account_id" jdbcType="INTEGER"/>
+            <result property="fundId" column="fund_id" jdbcType="INTEGER"/>
+            <result property="fundShare" column="fund_share" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        hold_id,account_id,fund_id,
+        fund_share
+    </sql>
+    <select id="selectFundShareByAccountAndFundId" resultType="com.tyz.model.entity.Hold">
+        select hold_id,account_id,fund_id,fund_share
+        from hold
+        where account_id = #{holdVo.AccountId} and fund_id = #{holdVo.FundId};
+    </select>
+</mapper>
