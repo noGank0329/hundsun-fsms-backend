@@ -7,8 +7,10 @@ import com.tyz.common.result.Result;
 import com.tyz.common.result.ResultCodeEnum;
 import com.tyz.model.entity.Account;
 import com.tyz.model.entity.Creditcard;
+import com.tyz.model.entity.Customer;
 import com.tyz.web.admin.service.AccountService;
 import com.tyz.web.admin.service.CreditcardService;
+import com.tyz.web.admin.service.CustomerService;
 import com.tyz.web.admin.vo.AccountRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +27,8 @@ public class CreditcardController {
 
     @Autowired
     private AccountService accountService;
+    @Autowired
+    private CustomerService customerService;
 
     @GetMapping("/balance")
     public Result<Creditcard> balance(
@@ -48,11 +52,15 @@ public class CreditcardController {
     }
 
     @GetMapping("/queryAccountByID")
-    public Result<List<AccountRequest>> queryAccountByID(@RequestParam Long id){
-        //List<AccountRequest> list = accountService.queryAccountByID(id);
-        LambdaQueryWrapper<AccountRequest> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(AccountRequest::getCustomerIdCard, id);
-        List<AccountRequest> list = accountService.queryAccountByID(queryWrapper);
+    public Result<List<Account>> queryAccountByID(@RequestParam Long id){
+//        List<AccountRequest> list = accountService.queryAccountByID(id);
+//        LambdaQueryWrapper<AccountRequest> queryWrapper = new LambdaQueryWrapper<>();
+//        queryWrapper.eq(AccountRequest::getCustomerIdCard, id);
+//        List<AccountRequest> list = accountService.queryAccountByID(queryWrapper);
+        Customer customer = customerService.getOneByIdCard(id);
+        LambdaQueryWrapper<Account> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Account::getCustomerId, customer.getCustomerId());
+        List<Account> list = accountService.list(queryWrapper);
         return Result.ok(list);
     }
 
